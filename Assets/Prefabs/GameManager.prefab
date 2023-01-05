@@ -50,6 +50,9 @@ MonoBehaviour:
   floorTiles:
   - {fileID: 3049456200440655019, guid: 0f526e327f1d34844aea4460f78d35ae, type: 3}
   - {fileID: 7639793056324373871, guid: 2d2f142da9c3e2c439e13a9292b23869, type: 3}
+  sprites:
+  - {fileID: 21300000, guid: 0d517e0856b99704cb5ef98391570a1c, type: 3}
+  - {fileID: 21300000, guid: c62015cefe9329940b18a70ba5b762a3, type: 3}
 --- !u!114 &5204436366227738582
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,3 +65,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fc1e5bef61031a4a861789930b23c75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sprites:
+  - {fileID: 21300000, guid: 0d517e0856b99704cb5ef98391570a1c, type: 3}
+  - {fileID: 21300000, guid: c62015cefe9329940b18a70ba5b762a3, type: 3}

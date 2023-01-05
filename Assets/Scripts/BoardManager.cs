@@ -8,43 +8,48 @@ public class BoardManager : MonoBehaviour
     public int columns = 10;
     public int rows = 4;
     public GameObject[] floorTiles;
+    public Sprite[] sprites;
 
     private Transform boardHolder;
-    private List<Vector3> gridPositions = new List<Vector3>();
 
-    void InitialiseList()
+    public void BoardUpdate(List<Sprite> sprite1, List<Sprite> sprite2)
     {
-        gridPositions.Clear();
-        for (int x = 0; x < columns; x++)
+        if (boardHolder != null)
         {
-            for (int y = 0; y < rows; y++)
-            {
-                gridPositions.Add(new Vector3(x, y, 0f));
-            }
+            Destroy(boardHolder.gameObject);
         }
-    }
-
-    void BoardSetup() 
-    {
         boardHolder = new GameObject("Board").transform;
-
         for (int x = 0; x < columns; x++)
         {
             if (x != 4 && x != 5)
             {
                 for (int y = 0; y < rows; y++)
                 {
-                    GameObject toInstantiate = floorTiles[Random.Range(0, floorTiles.Length)];
+                    List<Sprite> sprite = null;
+                    int index = 0;
+                    GameObject toInstantiate = null;
+                    if (x < 4)
+                    {
+                        index = x * 4 + y;
+                        sprite = sprite1;
+                    }
+                    else if (x > 5)
+                    {
+                        index = (x - 6) * 4 + y;
+                        sprite = sprite2;
+                    }
+                    if (sprite[index] == sprites[0])
+                    {
+                        toInstantiate = floorTiles[0];
+                    }
+                    else if (sprite[index] == sprites[1])
+                    {
+                        toInstantiate = floorTiles[1];
+                    }
                     GameObject instance = Instantiate(toInstantiate, new Vector3(x, y, 0f), Quaternion.identity) as GameObject;
                     instance.transform.SetParent(boardHolder);
                 }
             }
         }
-    }
-
-    public void SetupScene()
-    {
-        InitialiseList();
-        BoardSetup();
     }
 }
