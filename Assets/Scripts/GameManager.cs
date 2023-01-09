@@ -4,15 +4,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
+    public float levelStartDelay = 2f;
     public static GameManager instance = null;
+    
+    private TMP_Text movementsAllowedText;
+    private TMP_Text movementsRemainingText;
+    private TMP_Text levelText;
+    private GameObject levelImage;
+    private GameObject board;
     private BoardManager boardScript;
     private List<Sprite> sprite1;
     private List<Sprite> sprite2;
     private int level;
+    private int movementsAllowed;
+    private int movementsRemaining;
     private bool end;
+    private bool doingSetup;
+    private bool failed;
 
     public Sprite[] sprites;
 
@@ -32,29 +44,56 @@ public class GameManager : MonoBehaviour
     void InitGame()
     {
         end = false;
+        failed = false;
         level = 1;
+
+        levelImage = GameObject.Find("LevelImage");
+        levelText = GameObject.Find("LevelText").GetComponent<TextMeshProUGUI>();
+        movementsAllowedText = GameObject.Find("AllowedText").GetComponent<TextMeshProUGUI>();
+        movementsRemainingText = GameObject.Find("RemainingText").GetComponent<TextMeshProUGUI>();
         NextLevel();
     }
 
+    private void HideLevelImage()
+    {
+        boardScript.BoardUpdate(sprite1, sprite2);
+        board = GameObject.Find("Board");
+        movementsRemainingText.text = "Movements remaining: " + movementsRemaining;
+        movementsAllowedText.text = "Movements allowed: " + movementsAllowed;
+        levelImage.SetActive(false);
+        doingSetup = false;
+        board.SetActive(true);
+    }
+
+    private void HideBoard()
+    {
+        board = GameObject.Find("Board");
+        board.SetActive(false);
+        levelImage.SetActive(true);
+    }
+
+
     public void SelectCrate(Vector3 mousePos)
     {
-        if (!end)
+        if (!doingSetup && !failed)
         {
-            int x = Convert.ToInt32(mousePos[0]);
-            int y = Convert.ToInt32(mousePos[1]);
-            int index = (x - 6) * 4 + y;
-            UpdateCrate(index);
-            boardScript.BoardUpdate(sprite1, sprite2);
-            Check();
-        }
-        else
-        {
-            print("End");
+            movementsRemaining--;
+            movementsRemainingText.text = "Movements remaining: " + movementsRemaining;
+            if (!end)
+            {
+                int x = Convert.ToInt32(mousePos[0]);
+                int y = Convert.ToInt32(mousePos[1]);
+                int index = (x - 6) * 4 + y;
+                UpdateCrate(index);
+                boardScript.BoardUpdate(sprite1, sprite2);
+                Check();
+            }
         }
     }
 
     void Check()
     {
+        board = GameObject.Find("Board");
         int j = 0;
         for (int i = 0; i < sprite1.Count; i++)
         {
@@ -63,11 +102,16 @@ public class GameManager : MonoBehaviour
                 j++;
             }
         }
-        if (sprite1.Count == j)
+        if (sprite1.Count == j && movementsRemaining >=0)
         {
-            print("OK");
             level++;
             NextLevel();
+        }
+        else if (movementsRemaining == 0)
+        {
+            failed = true;
+            levelText.text = "You have lost the game";
+            Invoke("HideBoard", 1);
         }
     }
 
@@ -107,11 +151,14 @@ public class GameManager : MonoBehaviour
 
     void NextLevel()
     {
+        doingSetup = true;
         sprite1 = new List<Sprite>();
         sprite2 = new List<Sprite>();
         int rand = Random.Range(0, 15);
         if (level == 1)
         {
+            levelImage.SetActive(true);
+            movementsAllowed = 1;
             for (int i = 0; i < 16; i++)
             {
                 Sprite sprite = sprites[Random.Range(0, sprites.Length)];
@@ -122,6 +169,9 @@ public class GameManager : MonoBehaviour
         }
         else if (level == 2)
         {
+            board = GameObject.Find("Board");
+            Invoke("HideBoard", 1);
+            movementsAllowed = 5;
             for (int i = 0; i < 16; i++)
             {
                 Sprite sprite = sprites[Random.Range(0, sprites.Length)];
@@ -138,6 +188,9 @@ public class GameManager : MonoBehaviour
         }
         else if (level == 3)
         {
+            board = GameObject.Find("Board");
+            Invoke("HideBoard", 1);
+            movementsAllowed = 10;
             for (int i = 0; i < 16; i++)
             {
                 Sprite sprite = sprites[Random.Range(0, sprites.Length)];
@@ -161,10 +214,14 @@ public class GameManager : MonoBehaviour
         else
         {
             end = true;
+            levelText.text = "You have finished the game";
+            Invoke("HideBoard", 1);
         }
         if (!end)
         {
-            boardScript.BoardUpdate(sprite1, sprite2);
+            levelText.text = "Level " + level;
+            Invoke("HideLevelImage", levelStartDelay);
+            movementsRemaining = movementsAllowed;
         }
     }
 }
