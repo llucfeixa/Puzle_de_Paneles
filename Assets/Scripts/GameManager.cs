@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
         NextLevel();
     }
 
-    private void HideLevelImage()
+    void HideLevelImage()
     {
         boardScript.BoardUpdate(sprite1, sprite2);
         board = GameObject.Find("Board");
@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
         board.SetActive(true);
     }
 
-    private void HideBoard()
+    void HideBoard()
     {
         board = GameObject.Find("Board");
         board.SetActive(false);

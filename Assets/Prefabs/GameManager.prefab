@@ -65,6 +65,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fc1e5bef61031a4a861789930b23c75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelStartDelay: 2
   sprites:
   - {fileID: 21300000, guid: 0d517e0856b99704cb5ef98391570a1c, type: 3}
   - {fileID: 21300000, guid: c62015cefe9329940b18a70ba5b762a3, type: 3}
